@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Create User "ravi" on App Server 2
+
+## Task Description
+# For security reasons, the xFusionCorp Industries security team has decided to use custom Apache users for each web application hosted, rather than its default user. This will be the Apache user, so it shouldn't use the default home directory. Create the user as per requirements given below:
+# a. Create a user named ravi on the App server 2 in Stratos Datacenter.
+# b. Set its UID to 1648 and home directory to /var/www/ravi.
+
+## Instructions
+# To create the user "ravi" on the App Server 2: https://kodekloudhub.github.io/kodekloud-engineer/docs/projects/nautilus
+
+sshpass -p 'Am3ric@' ssh -o StrictHostKeyChecking=no steve@172.16.238.11
+sudo useradd -u 1648 -d /var/www/ravi ravi
+
+# Verify that the user "ravi" is created successfully:
+echo "Verify that the user \"ravi\" is created successfully:"
+
+id ravi
+
+
