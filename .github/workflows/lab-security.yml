@@ -1,0 +1,32 @@
+name: Linux Docker hardening lab
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'labs/hardened-http/**'
+      - '1 Create a user'
+      - '.github/workflows/lab-security.yml'
+  pull_request:
+    paths:
+      - 'labs/hardened-http/**'
+      - '1 Create a user'
+      - '.github/workflows/lab-security.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Syntaxe et tests HTTP
+        run: |
+          python -m py_compile labs/hardened-http/server.py
+          python -m unittest discover -s labs/hardened-http/tests -v
+      - name: Docker Compose valid
+        run: docker compose -f labs/hardened-http/compose.yaml config --quiet
+      - name: Conteneur local et garde-fous
+        run: bash labs/hardened-http/verify.sh

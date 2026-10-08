@@ -1,21 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# KodeKloud / Nautilus — créer un utilisateur système Apache sur un serveur de labo.
+# Aucun mot de passe, aucune adresse personnelle ni contournement de vérification de clé SSH.
+set -euo pipefail
 
-# Create User "ravi" on App Server 2
+: "${LAB_SSH_HOST:?Définis LAB_SSH_HOST}"
+: "${LAB_SSH_USER:?Définis LAB_SSH_USER}"
 
-## Task Description
-# For security reasons, the xFusionCorp Industries security team has decided to use custom Apache users for each web application hosted, rather than its default user. This will be the Apache user, so it shouldn't use the default home directory. Create the user as per requirements given below:
-# a. Create a user named ravi on the App server 2 in Stratos Datacenter.
-# b. Set its UID to 1648 and home directory to /var/www/ravi.
+# Vérifier au préalable la clé hôte SSH auprès de l'administrateur du laboratoire.
+# Utiliser ssh-agent ou la clé SSH configurée localement, pas de mot de passe dans le dépôt.
+ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "${LAB_SSH_USER}@${LAB_SSH_HOST}" '
+  set -eu
+  if ! id -u ravi >/dev/null 2>&1; then
+    sudo useradd -u 1648 -d /var/www/ravi ravi
+  fi
+  test "$(id -u ravi)" -eq 1648
+  test "$(getent passwd ravi | cut -d: -f6)" = "/var/www/ravi"
+  id ravi
+'
 
-## Instructions
-# To create the user "ravi" on the App Server 2: https://kodekloudhub.github.io/kodekloud-engineer/docs/projects/nautilus
-
-sshpass -p 'Am3ric@' ssh -o StrictHostKeyChecking=no steve@172.16.238.11
-sudo useradd -u 1648 -d /var/www/ravi ravi
-
-# Verify that the user "ravi" is created successfully:
-echo "Verify that the user \"ravi\" is created successfully:"
-
-id ravi
-
-
+# Historique : un ancien commit comportait un identifiant de laboratoire.
+# La suppression du fichier courant ne purge PAS l'historique Git.
